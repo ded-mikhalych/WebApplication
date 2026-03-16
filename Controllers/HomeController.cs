@@ -170,6 +170,7 @@ namespace WebApplication.Controllers
             var model = new RecipePageViewModel
             {
                 Name = recipe.Name ?? string.Empty,
+                AuthorText = string.IsNullOrWhiteSpace(recipe.Author) ? "Не указан" : recipe.Author,
                 Description = recipe.Description ?? string.Empty,
                 MainImageSrc = ResolveImagePath(recipe.ImageFileName),
                 DifficultyText = GetDifficultyText(recipe.Difficulty),

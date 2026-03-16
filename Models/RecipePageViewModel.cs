@@ -3,6 +3,7 @@ namespace WebApplication.Models
     public class RecipePageViewModel
     {
         public string Name { get; set; } = string.Empty;
+        public string AuthorText { get; set; } = "Не указан";
         public string Description { get; set; } = string.Empty;
         public string MainImageSrc { get; set; } = string.Empty;
         public string DifficultyText { get; set; } = string.Empty;

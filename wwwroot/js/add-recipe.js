@@ -82,10 +82,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Отправка формы — просто заглушка
   const recipeForm = document.getElementById("recipeForm");
-  recipeForm.addEventListener("submit", e => {
+  recipeForm.addEventListener("submit", async e => {
     if (e.defaultPrevented) return;
     e.preventDefault();
-    alert("Рецепт сохранён.");
+
+    const difficultyMap = { easy: 1, medium: 2, hard: 3 };
+    const titleInput = recipeForm.querySelector('input[name="title"]');
+    const descriptionInput = recipeForm.querySelector('textarea[name="description"]');
+    const authorInput = recipeForm.querySelector('input[name="author"]');
+    const cuisineInput = recipeForm.querySelector('input[name="cuisine"]');
+    const difficultyInput = recipeForm.querySelector('select[name="difficulty"]');
+    const mainImageInput = recipeForm.querySelector('#recipeImage');
+
+    const ingredients = Array.from(recipeForm.querySelectorAll('input[name="ingredients[]"]'))
+      .map(i => i.value.trim())
+      .filter(Boolean);
+
+    const steps = Array.from(recipeForm.querySelectorAll('textarea[name="steps[]"]'))
+      .map(s => s.value.trim())
+      .filter(Boolean);
+
+    const stepImageInputs = Array.from(recipeForm.querySelectorAll('.step input[type="file"]'));
+
+    const formData = new FormData();
+    formData.append('Title', titleInput?.value?.trim() || '');
+    formData.append('Description', descriptionInput?.value?.trim() || '');
+    formData.append('Author', authorInput?.value?.trim() || '');
+    formData.append('Cuisine', cuisineInput?.value?.trim() || '');
+    formData.append('Difficulty', String(difficultyMap[difficultyInput?.value] || 0));
+    formData.append('CookingTime', '30');
+
+    ingredients.forEach(i => formData.append('Ingredients', i));
+    steps.forEach(s => formData.append('Steps', s));
+
+    if (mainImageInput?.files?.[0]) {
+      formData.append('MainImage', mainImageInput.files[0]);
+    }
+
+    stepImageInputs.forEach(input => {
+      if (input.files?.[0]) {
+        formData.append('StepImages', input.files[0]);
+      }
+    });
+
+    const submitBtn = recipeForm.querySelector('input[type="submit"]');
+    const originalText = submitBtn?.value || 'Сохранить';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.value = 'Сохраняем...';
+    }
+
+    try {
+      const response = await fetch('/api/recipe', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Не удалось сохранить рецепт');
+      }
+
+      alert('Рецепт успешно сохранен');
+      if (result.data?.slug) {
+        window.location.href = `/home/recipe/${encodeURIComponent(result.data.slug)}`;
+        return;
+      }
+
+      window.location.href = '/home/catalog';
+    } catch (error) {
+      alert(error.message || 'Ошибка при сохранении рецепта');
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.value = originalText;
+      }
+    }
   });
 
   // --- Drag & Drop для шагов ---
