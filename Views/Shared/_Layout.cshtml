@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebApplication</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/catalog.css" asp-append-version="true" />
@@ -27,7 +27,7 @@
     </div>
 
     <footer>
-        <a href="about.html">О нас</a> |
+        <a asp-controller="Home" asp-action="About">О нас</a> |
         <a href="#">ВКонтакте</a> |
         <a href="#">Telegram</a> |
         <a href="#">YouTube</a>

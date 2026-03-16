@@ -10,11 +10,12 @@
     <div>
         @foreach (var news in Model.LatestNews)
         {
-            <div class="news-card">
+            var action = news.Title == "Подсластители под угрозой" ? "Article3" : "InDevelopment";
+            <a class="news-card" asp-controller="Home" asp-action="@action">
                 <img src="~/images/@news.ImageFileName" alt="@news.Title" />
                 <h3>@news.Title</h3>
                 <p>@news.Summary</p>
-            </div>
+            </a>
         }
     </div>
 </div>
@@ -24,7 +25,16 @@
     <div class="cards">
         @foreach (var recipe in Model.NewestRecipes)
         {
-            <a class="recipe-card" asp-controller="Home" asp-action="Catalog">
+            var recipeAction = recipe.Name switch
+            {
+                "Харчо" => "Kharcho",
+                "Грибы в сметане" => "Mushrooms",
+                "Оливье" => "Olivie",
+                "Борщ" => "Borsch",
+                _ => "Catalog"
+            };
+
+            <a class="recipe-card" asp-controller="Home" asp-action="@recipeAction">
                 <img src="~/images/@recipe.ImageFileName" alt="@recipe.Name" />
                 <h4>@recipe.Name</h4>
             </a>
@@ -37,7 +47,19 @@
     <div class="cards">
         @foreach (var category in Model.PopularCategories)
         {
-            <a class="category-card" asp-controller="Home" asp-action="Catalog">
+            var categoryAction = category.Name switch
+            {
+                "Russian" => "Soups",
+                _ => "InDevelopment"
+            };
+            var categoryImage = category.Name switch
+            {
+                "Russian" => "soups.png",
+                _ => "salads.png"
+            };
+
+            <a class="category-card" asp-controller="Home" asp-action="@categoryAction">
+                <img src="~/images/@categoryImage" alt="@category.DisplayName" />
                 <h4>@category.DisplayName</h4>
                 <p style="font-size:13px;color:var(--muted);margin:4px 0 0;">@category.RecipeCount блюд</p>
             </a>

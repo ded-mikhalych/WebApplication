@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кулинарум | Добавить рецепт</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/form.css">
+  <script src="scripts/validate-form.js" defer></script>
+  <script src="scripts/image-editor.js" defer></script>
+  <script src="scripts/add-recipe.js" defer></script>
+</head>
+<body>
+
+<header>
+  <img src="images/logo.png" alt="Логотип" width="80">
+  <div>
+    <a href="index.html">Главная</a> |
+    <a href="catalog.html">Каталог</a> |
+    <a href="favorites.html">Избранное</a> |
+    <a href="404.html">Войти</a>
+  </div>
+</header>
+
+<main>
+  <h1>Добавить рецепт</h1>
+
+  <form id="recipeForm">
+
+    <div class="field">
+      <label>Название:</label><br>
+      <input type="text" name="title" required>
+      <div class="error-msg"></div>
+    </div>
+    <br>
+
+    <div class="field">
+      <label for="description">Описание:</label><br>
+      <textarea name="description" id="description" maxlength="250" required></textarea>
+      <div class="char-counter"><span id="descCount">0</span>/250</div>
+      <div class="error-msg"></div>
+    </div>
+    <br>
+
+    <div class="field">
+      <label for="author">Автор: <span class="required">*</span></label><br>
+      <input type="text" name="author" id="author" required>
+      <div class="error-msg"></div>
+    </div>
+    <br>
+
+    <div class="field">
+      <label for="cuisine">Кухня:</label><br>
+      <input type="text" name="cuisine" id="cuisine">
+      <div class="error-msg"></div>
+    </div>
+    <br>
+
+    <div class="field">
+      <label for="difficulty">Сложность:</label><br>
+      <select name="difficulty" id="difficulty" required>
+        <option value="">Выберите...</option>
+        <option value="easy">Легко</option>
+        <option value="medium">Средне</option>
+        <option value="hard">Сложно</option>
+      </select>
+      <div class="error-msg"></div>
+    </div>
+    <br>
+
+    <div class="field">
+      <h3>Изображение блюда:</h3>
+      <input type="file" name="image" id="recipeImage" accept="image/*">
+      <div class="error-msg"></div>
+    </div>
+    <br>
+
+    <h3>Ингредиенты:</h3>
+    <div id="ingredients"></div>
+    <button type="button" id="addIngredient">+ Добавить ингредиент</button>
+    <br><br>
+
+    <h3>Шаги приготовления:</h3>
+    <p class="drag-instruction">Перетащите шаги за ☰, чтобы изменить порядок.</p>
+    <div id="steps"></div>
+    <button type="button" id="addStep">+ Добавить шаг</button>
+    <br><br>
+
+    <input type="submit" value="Сохранить">
+
+  </form>
+</main>
+
+<footer>
+  <a href="about.html">О нас</a> |
+  <a href="#">ВКонтакте</a> |
+  <a href="#">Telegram</a> |
+  <a href="#">YouTube</a>
+</footer>
+
+</body>
+</html>

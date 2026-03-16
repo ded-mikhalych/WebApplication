@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кулинарум | Каталог блюд</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/catalog.css">
+</head>
+<body>
+  <header>
+    <img src="images/logo.png" alt="Логотип" width="80">
+    <div>
+      <a href="index.html">Главная</a> |
+      <a href="catalog.html">Каталог</a> |
+      <a href="favorites.html">Избранное</a> |
+  <a href="404.html">Войти</a>
+    </div>
+  </header>
+
+  <main>
+    <h1>Каталог блюд</h1>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1200px;margin:0 auto;padding:0 18px;">
+      <div>Добавить блюдо</div>
+      <a class="recipe-card" href="form.html" style="align-self:flex-start;">Добавить</a>
+    </div>
+    <div class="layout">
+      <aside class="filters">
+        <p><strong>Фильтры</strong></p>
+        <form>
+          <p>Поиск:</p>
+          <p><input type="text" name="q"></p>
+
+          <p>Кухня:</p>
+          <p><label><input type="checkbox" name="cuisine" value="russian"> Русская</label></p>
+          <p><label><input type="checkbox" name="cuisine" value="european"> Европейская</label></p>
+          <p><label><input type="checkbox" name="cuisine" value="asian"> Азиатская</label></p>
+
+          <p>Сложность:</p>
+          <p><label><input type="checkbox" name="difficulty" value="easy"> Легко</label></p>
+          <p><label><input type="checkbox" name="difficulty" value="medium"> Средне</label></p>
+          <p><label><input type="checkbox" name="difficulty" value="hard"> Сложно</label></p>
+
+          <p>
+            <input type="reset" value="Сбросить">
+            <input type="submit" value="Применить">
+          </p>
+        </form>
+      </aside>
+
+      <section class="catalog">
+        <div class="cards">
+          <a class="recipe-card" href="404.html">
+            <img src="images/syrniki.png" alt="Сырники">
+            <h4>Сырники с шоколадом</h4>
+          </a>
+          <a class="recipe-card" href="kharcho.html">
+            <img src="images/kharcho.png" alt="Харчо из говядины с картошкой и помидорами">
+            <h4>Харчо из говядины с картошкой и помидорами</h4>
+          </a>
+          <a class="recipe-card" href="mushrooms.html">
+            <img src="images/mushrooms.png" alt="Грибы">
+            <h4>Солёные опята</h4>
+          </a>
+          <a class="recipe-card" href="borch.html">
+            <img src="images/borsch.png" alt="Борщ">
+            <h4>Зажарка для борща на зиму</h4>
+          </a>
+          <a class="recipe-card" href="olivie.html">
+            <img src="images/olivie.png" alt="Оливье">
+            <h4>Оливье</h4>
+          </a>
+          <a class="recipe-card" href="404.html">
+            <img src="images/greece_salad.png" alt="Греческий салат">
+            <h4>Греческий салат</h4>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <a href="about.html">О нас</a> |
+    <a href="#">ВКонтакте</a> |
+    <a href="#">Telegram</a> |
+    <a href="#">YouTube</a>
+  </footer>
+</body>
+</html>

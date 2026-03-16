@@ -72,6 +72,46 @@ namespace WebApplication.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult InDevelopment()
+        {
+            return View();
+        }
+
+        public IActionResult Article3()
+        {
+            return View();
+        }
+
+        public IActionResult Soups()
+        {
+            return View();
+        }
+
+        public IActionResult Kharcho()
+        {
+            return View();
+        }
+
+        public IActionResult Mushrooms()
+        {
+            return View();
+        }
+
+        public IActionResult Olivie()
+        {
+            return View();
+        }
+
+        public IActionResult Borsch()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
