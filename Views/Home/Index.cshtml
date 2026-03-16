@@ -11,8 +11,9 @@
         @foreach (var news in Model.LatestNews)
         {
             var action = news.Title == "Подсластители под угрозой" ? "Article3" : "InDevelopment";
+            var imageSrc = news.ImageFileName.StartsWith("https://") ? news.ImageFileName : $"~/images/{news.ImageFileName}";
             <a class="news-card" asp-controller="Home" asp-action="@action">
-                <img src="~/images/@news.ImageFileName" alt="@news.Title" />
+                <img src="@imageSrc" alt="@news.Title" />
                 <h3>@news.Title</h3>
                 <p>@news.Summary</p>
             </a>
@@ -25,11 +26,12 @@
     <div class="cards">
         @foreach (var recipe in Model.NewestRecipes)
         {
+            var imageSrc = recipe.ImageFileName.StartsWith("https://") ? recipe.ImageFileName : $"~/images/{recipe.ImageFileName}";
             <a class="recipe-card"
                asp-controller="Home"
                asp-action="@(string.IsNullOrWhiteSpace(recipe.Slug) ? "Catalog" : "Recipe")"
                asp-route-slug="@recipe.Slug">
-                <img src="~/images/@recipe.ImageFileName" alt="@recipe.Name" />
+                <img src="@imageSrc" alt="@recipe.Name" />
                 <h4>@recipe.Name</h4>
             </a>
         }

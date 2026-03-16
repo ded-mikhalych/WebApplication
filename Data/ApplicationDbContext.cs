@@ -140,6 +140,70 @@ namespace WebApplication.Data
                     CreatedAt = new DateTime(2026, 3, 5, 0, 0, 0, DateTimeKind.Utc),
                     RatingSum = 0,
                     RatingCount = 0
+                },
+                new Recipe
+                {
+                    Id = 7,
+                    Name = "Узбекский плов",
+                    Slug = "plov",
+                    Description = "Классический плов с бараниной, рисом и морковью в казане",
+                    Cuisine = "Узбекская",
+                    Difficulty = 2,
+                    CategoryId = 3,
+                    ImageFileName = "kharcho.png",
+                    IsFavorite = false,
+                    CookingTime = 90,
+                    CreatedAt = new DateTime(2026, 3, 6, 0, 0, 0, DateTimeKind.Utc),
+                    RatingSum = 0,
+                    RatingCount = 0
+                },
+                new Recipe
+                {
+                    Id = 8,
+                    Name = "Том ям с креветками",
+                    Slug = "tom-yum",
+                    Description = "Пряный тайский суп на кокосовом молоке с креветками и лаймом",
+                    Cuisine = "Тайская",
+                    Difficulty = 3,
+                    CategoryId = 3,
+                    ImageFileName = "mushrooms.png",
+                    IsFavorite = false,
+                    CookingTime = 45,
+                    CreatedAt = new DateTime(2026, 3, 8, 0, 0, 0, DateTimeKind.Utc),
+                    RatingSum = 0,
+                    RatingCount = 0
+                },
+                new Recipe
+                {
+                    Id = 9,
+                    Name = "Рататуй",
+                    Slug = "ratatouille",
+                    Description = "Французское овощное рагу из баклажанов, кабачков и томатов",
+                    Cuisine = "Французская",
+                    Difficulty = 2,
+                    CategoryId = 2,
+                    ImageFileName = "greece_salad.png",
+                    IsFavorite = false,
+                    CookingTime = 60,
+                    CreatedAt = new DateTime(2026, 3, 9, 0, 0, 0, DateTimeKind.Utc),
+                    RatingSum = 0,
+                    RatingCount = 0
+                },
+                new Recipe
+                {
+                    Id = 10,
+                    Name = "Бефстроганов",
+                    Slug = "beef-stroganoff",
+                    Description = "Говядина в сливочно-сметанном соусе с луком и грибами",
+                    Cuisine = "Русская",
+                    Difficulty = 2,
+                    CategoryId = 1,
+                    ImageFileName = "olivie.png",
+                    IsFavorite = false,
+                    CookingTime = 50,
+                    CreatedAt = new DateTime(2026, 3, 10, 0, 0, 0, DateTimeKind.Utc),
+                    RatingSum = 0,
+                    RatingCount = 0
                 }
             };
 
@@ -196,7 +260,45 @@ namespace WebApplication.Data
                 new RecipeIngredient { Id = 42, RecipeId = 6, SortOrder = 4, DisplayText = "Маслины — 80 г" },
                 new RecipeIngredient { Id = 43, RecipeId = 6, SortOrder = 5, DisplayText = "Красный лук — 1/2 шт." },
                 new RecipeIngredient { Id = 44, RecipeId = 6, SortOrder = 6, DisplayText = "Оливковое масло — 2 ст.л." },
-                new RecipeIngredient { Id = 45, RecipeId = 6, SortOrder = 7, DisplayText = "Лимонный сок — 1 ст.л." }
+                new RecipeIngredient { Id = 45, RecipeId = 6, SortOrder = 7, DisplayText = "Лимонный сок — 1 ст.л." },
+
+                new RecipeIngredient { Id = 46, RecipeId = 7, SortOrder = 1, DisplayText = "Рис девзира — 700 г" },
+                new RecipeIngredient { Id = 47, RecipeId = 7, SortOrder = 2, DisplayText = "Баранина — 700 г" },
+                new RecipeIngredient { Id = 48, RecipeId = 7, SortOrder = 3, DisplayText = "Морковь — 700 г" },
+                new RecipeIngredient { Id = 49, RecipeId = 7, SortOrder = 4, DisplayText = "Лук — 300 г" },
+                new RecipeIngredient { Id = 50, RecipeId = 7, SortOrder = 5, DisplayText = "Чеснок — 2 головки" },
+                new RecipeIngredient { Id = 51, RecipeId = 7, SortOrder = 6, DisplayText = "Зира — 1.5 ч.л." },
+                new RecipeIngredient { Id = 52, RecipeId = 7, SortOrder = 7, DisplayText = "Барбарис — 1 ст.л." },
+                new RecipeIngredient { Id = 53, RecipeId = 7, SortOrder = 8, DisplayText = "Растительное масло — 120 мл" },
+                new RecipeIngredient { Id = 54, RecipeId = 7, SortOrder = 9, DisplayText = "Соль — по вкусу" },
+
+                new RecipeIngredient { Id = 55, RecipeId = 8, SortOrder = 1, DisplayText = "Креветки — 400 г" },
+                new RecipeIngredient { Id = 56, RecipeId = 8, SortOrder = 2, DisplayText = "Кокосовое молоко — 400 мл" },
+                new RecipeIngredient { Id = 57, RecipeId = 8, SortOrder = 3, DisplayText = "Куриный бульон — 600 мл" },
+                new RecipeIngredient { Id = 58, RecipeId = 8, SortOrder = 4, DisplayText = "Паста том ям — 2 ст.л." },
+                new RecipeIngredient { Id = 59, RecipeId = 8, SortOrder = 5, DisplayText = "Лемонграсс — 2 стебля" },
+                new RecipeIngredient { Id = 60, RecipeId = 8, SortOrder = 6, DisplayText = "Листья каффир-лайма — 4 шт." },
+                new RecipeIngredient { Id = 61, RecipeId = 8, SortOrder = 7, DisplayText = "Шампиньоны — 200 г" },
+                new RecipeIngredient { Id = 62, RecipeId = 8, SortOrder = 8, DisplayText = "Рыбный соус — 2 ст.л." },
+                new RecipeIngredient { Id = 63, RecipeId = 8, SortOrder = 9, DisplayText = "Сок лайма — 2 ст.л." },
+
+                new RecipeIngredient { Id = 64, RecipeId = 9, SortOrder = 1, DisplayText = "Баклажан — 1 крупный" },
+                new RecipeIngredient { Id = 65, RecipeId = 9, SortOrder = 2, DisplayText = "Кабачок — 1 крупный" },
+                new RecipeIngredient { Id = 66, RecipeId = 9, SortOrder = 3, DisplayText = "Помидоры — 5 шт." },
+                new RecipeIngredient { Id = 67, RecipeId = 9, SortOrder = 4, DisplayText = "Болгарский перец — 2 шт." },
+                new RecipeIngredient { Id = 68, RecipeId = 9, SortOrder = 5, DisplayText = "Лук — 1 шт." },
+                new RecipeIngredient { Id = 69, RecipeId = 9, SortOrder = 6, DisplayText = "Чеснок — 3 зубчика" },
+                new RecipeIngredient { Id = 70, RecipeId = 9, SortOrder = 7, DisplayText = "Оливковое масло — 3 ст.л." },
+                new RecipeIngredient { Id = 71, RecipeId = 9, SortOrder = 8, DisplayText = "Тимьян и базилик — по вкусу" },
+
+                new RecipeIngredient { Id = 72, RecipeId = 10, SortOrder = 1, DisplayText = "Говяжья вырезка — 600 г" },
+                new RecipeIngredient { Id = 73, RecipeId = 10, SortOrder = 2, DisplayText = "Лук — 2 шт." },
+                new RecipeIngredient { Id = 74, RecipeId = 10, SortOrder = 3, DisplayText = "Шампиньоны — 250 г" },
+                new RecipeIngredient { Id = 75, RecipeId = 10, SortOrder = 4, DisplayText = "Сметана — 250 г" },
+                new RecipeIngredient { Id = 76, RecipeId = 10, SortOrder = 5, DisplayText = "Сливки 20% — 150 мл" },
+                new RecipeIngredient { Id = 77, RecipeId = 10, SortOrder = 6, DisplayText = "Горчица — 1 ч.л." },
+                new RecipeIngredient { Id = 78, RecipeId = 10, SortOrder = 7, DisplayText = "Мука — 1 ст.л." },
+                new RecipeIngredient { Id = 79, RecipeId = 10, SortOrder = 8, DisplayText = "Соль и перец — по вкусу" }
             };
 
             modelBuilder.Entity<RecipeIngredient>().HasData(recipeIngredients);
@@ -246,7 +348,39 @@ namespace WebApplication.Data
                 new RecipeStep { Id = 36, RecipeId = 6, StepNumber = 2, Description = "Нарежьте огурцы и помидоры крупными кусочками.", ImagePath = "greece_salad/step2.jpg" },
                 new RecipeStep { Id = 37, RecipeId = 6, StepNumber = 3, Description = "Добавьте тонкие полукольца лука и маслины.", ImagePath = "greece_salad/step3.jpg" },
                 new RecipeStep { Id = 38, RecipeId = 6, StepNumber = 4, Description = "Положите кубики феты поверх салата.", ImagePath = "greece_salad/step4.jpg" },
-                new RecipeStep { Id = 39, RecipeId = 6, StepNumber = 5, Description = "Заправьте маслом и лимонным соком, аккуратно перемешайте.", ImagePath = "greece_salad/step5.jpg" }
+                new RecipeStep { Id = 39, RecipeId = 6, StepNumber = 5, Description = "Заправьте маслом и лимонным соком, аккуратно перемешайте.", ImagePath = "greece_salad/step5.jpg" },
+
+                new RecipeStep { Id = 40, RecipeId = 7, StepNumber = 1, Description = "Промойте рис до прозрачной воды и замочите на 30 минут.", ImagePath = "kharcho/step1.jpg" },
+                new RecipeStep { Id = 41, RecipeId = 7, StepNumber = 2, Description = "Нарежьте баранину кубиками, лук полукольцами, морковь крупной соломкой.", ImagePath = "kharcho/step2.jpg" },
+                new RecipeStep { Id = 42, RecipeId = 7, StepNumber = 3, Description = "Разогрейте казан с маслом, обжарьте мясо до румяной корочки.", ImagePath = "kharcho/step3.jpg" },
+                new RecipeStep { Id = 43, RecipeId = 7, StepNumber = 4, Description = "Добавьте лук и обжарьте до золотистого цвета.", ImagePath = "kharcho/step4.jpg" },
+                new RecipeStep { Id = 44, RecipeId = 7, StepNumber = 5, Description = "Всыпьте морковь и готовьте 8-10 минут, затем добавьте зиру и барбарис.", ImagePath = "kharcho/step5.jpg" },
+                new RecipeStep { Id = 45, RecipeId = 7, StepNumber = 6, Description = "Влейте кипяток, чтобы покрыть содержимое, и тушите зирвак 30 минут.", ImagePath = "kharcho/step6.jpg" },
+                new RecipeStep { Id = 46, RecipeId = 7, StepNumber = 7, Description = "Добавьте рис ровным слоем, долейте воду на 1 см выше риса и готовьте без крышки.", ImagePath = "kharcho/step7.jpg" },
+                new RecipeStep { Id = 47, RecipeId = 7, StepNumber = 8, Description = "Когда вода уйдет, вставьте головки чеснока, накройте и томите 20 минут.", ImagePath = "kharcho/step8.jpg" },
+
+                new RecipeStep { Id = 48, RecipeId = 8, StepNumber = 1, Description = "Очистите креветки, оставив хвостики, и подготовьте остальные ингредиенты.", ImagePath = "mushrooms/step1.jpg" },
+                new RecipeStep { Id = 49, RecipeId = 8, StepNumber = 2, Description = "Доведите бульон до кипения, добавьте лемонграсс и листья каффир-лайма.", ImagePath = "mushrooms/step2.jpg" },
+                new RecipeStep { Id = 50, RecipeId = 8, StepNumber = 3, Description = "Положите пасту том ям и размешайте до полного растворения.", ImagePath = "mushrooms/step3.jpg" },
+                new RecipeStep { Id = 51, RecipeId = 8, StepNumber = 4, Description = "Добавьте нарезанные грибы и варите 3-4 минуты.", ImagePath = "mushrooms/step4.jpg" },
+                new RecipeStep { Id = 52, RecipeId = 8, StepNumber = 5, Description = "Влейте кокосовое молоко и прогрейте суп, не доводя до активного кипения.", ImagePath = "mushrooms/step5.jpg" },
+                new RecipeStep { Id = 53, RecipeId = 8, StepNumber = 6, Description = "Положите креветки и готовьте 2-3 минуты до розового цвета.", ImagePath = "mushrooms/step6.jpg" },
+                new RecipeStep { Id = 54, RecipeId = 8, StepNumber = 7, Description = "Приправьте рыбным соусом и соком лайма, отрегулируйте вкус.", ImagePath = "mushrooms/step7.jpg" },
+                new RecipeStep { Id = 55, RecipeId = 8, StepNumber = 8, Description = "Подавайте горячим с кинзой и долькой лайма.", ImagePath = "mushrooms/step8.jpg" },
+
+                new RecipeStep { Id = 56, RecipeId = 9, StepNumber = 1, Description = "Нарежьте баклажан, кабачок и томаты тонкими кружками.", ImagePath = "greece_salad/step1.jpg" },
+                new RecipeStep { Id = 57, RecipeId = 9, StepNumber = 2, Description = "Обжарьте лук с перцем, добавьте половину томатов и потушите соус 10 минут.", ImagePath = "greece_salad/step2.jpg" },
+                new RecipeStep { Id = 58, RecipeId = 9, StepNumber = 3, Description = "Переложите соус в форму, сверху выложите овощи чередуя кружки.", ImagePath = "greece_salad/step3.jpg" },
+                new RecipeStep { Id = 59, RecipeId = 9, StepNumber = 4, Description = "Сбрызните маслом, посыпьте чесноком, тимьяном и базиликом.", ImagePath = "greece_salad/step4.jpg" },
+                new RecipeStep { Id = 60, RecipeId = 9, StepNumber = 5, Description = "Запекайте при 180°C около 40 минут до мягкости овощей.", ImagePath = "greece_salad/step5.jpg" },
+
+                new RecipeStep { Id = 61, RecipeId = 10, StepNumber = 1, Description = "Нарежьте говядину тонкой соломкой поперек волокон.", ImagePath = "olivie/step1.jpg" },
+                new RecipeStep { Id = 62, RecipeId = 10, StepNumber = 2, Description = "Обваляйте мясо в муке и быстро обжарьте на сильном огне.", ImagePath = "olivie/step2.jpg" },
+                new RecipeStep { Id = 63, RecipeId = 10, StepNumber = 3, Description = "Отдельно обжарьте лук и грибы до испарения влаги.", ImagePath = "olivie/step3.jpg" },
+                new RecipeStep { Id = 64, RecipeId = 10, StepNumber = 4, Description = "Верните мясо в сковороду, добавьте горчицу, соль и перец.", ImagePath = "olivie/step4.jpg" },
+                new RecipeStep { Id = 65, RecipeId = 10, StepNumber = 5, Description = "Влейте сливки и добавьте сметану, аккуратно перемешайте.", ImagePath = "olivie/step5.jpg" },
+                new RecipeStep { Id = 66, RecipeId = 10, StepNumber = 6, Description = "Тушите 8-10 минут на слабом огне до загустения соуса.", ImagePath = "olivie/step6.jpg" },
+                new RecipeStep { Id = 67, RecipeId = 10, StepNumber = 7, Description = "Подавайте с картофельным пюре, рисом или пастой.", ImagePath = "olivie/step7.jpg" }
             };
 
             modelBuilder.Entity<RecipeStep>().HasData(recipeSteps);
@@ -289,6 +423,60 @@ namespace WebApplication.Data
                     ContentHtml = "<p>Грузинская кухня славится балансом специй, свежей зелени и медленного приготовления. Хачапури, хинкали, пхали и сациви стали визитной карточкой региона и давно вышли за его пределы.</p><p>В основе подхода — сезонные продукты, яркие соусы и уважение к семейным традициям.</p>",
                     ImageFileName = "news4.jpg",
                     CreatedAt = new DateTime(2026, 2, 25, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new News
+                {
+                    Id = 5,
+                    Title = "Средиземноморская диета и здоровье сердца",
+                    Summary = "Кардиологи подтверждают пользу рациона с овощами, рыбой и оливковым маслом.",
+                    ContentHtml = "<p>Систематические обзоры показывают, что средиземноморская модель питания связана с более низким риском сердечно-сосудистых событий. В рационе преобладают овощи, бобовые, цельные злаки, рыба и оливковое масло.</p><p>Эксперты подчеркивают, что ключевой эффект достигается не отдельным продуктом, а устойчивым режимом питания и умеренной физической активностью.</p>",
+                    ImageFileName = "news1.png",
+                    CreatedAt = new DateTime(2026, 3, 11, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new News
+                {
+                    Id = 6,
+                    Title = "Ферментированные продукты и микробиота",
+                    Summary = "Йогурт, кефир и квашеные овощи могут поддерживать разнообразие кишечной микрофлоры.",
+                    ContentHtml = "<p>Диетологи отмечают, что регулярное употребление ферментированных продуктов способно положительно влиять на микробиоту кишечника. Наиболее часто исследуются кефир, натуральный йогурт, квашеная капуста и кимчи.</p><p>При этом специалисты напоминают о важности состава: продукты с избытком соли или сахара могут нивелировать потенциальную пользу.</p>",
+                    ImageFileName = "news2.png",
+                    CreatedAt = new DateTime(2026, 3, 12, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new News
+                {
+                    Id = 7,
+                    Title = "Почему важно есть больше бобовых",
+                    Summary = "Фасоль, чечевица и нут помогают добирать белок и пищевые волокна.",
+                    ContentHtml = "<p>Бобовые остаются одним из самых доступных источников растительного белка и клетчатки. По данным профильных рекомендаций по питанию, их регулярное включение в меню может улучшать липидный профиль и насыщаемость.</p><p>Шеф-повара советуют начинать с простых блюд: чечевичного супа, хумуса и салатов с фасолью.</p>",
+                    ImageFileName = "news3.png",
+                    CreatedAt = new DateTime(2026, 3, 13, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new News
+                {
+                    Id = 8,
+                    Title = "Цельнозерновые продукты против скачков сахара",
+                    Summary = "Замена рафинированной муки на цельнозерновую снижает гликемическую нагрузку рациона.",
+                    ContentHtml = "<p>Нутрициологи рекомендуют чаще выбирать цельнозерновой хлеб, крупы и макароны из твердых сортов пшеницы. Такие продукты содержат больше пищевых волокон и медленнее повышают уровень глюкозы в крови.</p><p>Для постепенного перехода достаточно заменить хотя бы половину привычных гарниров на цельнозерновые аналоги.</p>",
+                    ImageFileName = "news4.jpg",
+                    CreatedAt = new DateTime(2026, 3, 14, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new News
+                {
+                    Id = 9,
+                    Title = "Как безопасно готовить рыбу дома",
+                    Summary = "Температурный контроль и правильное хранение снижают риск пищевых инфекций.",
+                    ContentHtml = "<p>Санитарные рекомендации напоминают: сырую рыбу нужно хранить отдельно от готовых продуктов и использовать отдельные разделочные поверхности. Термическая обработка до полной готовности значительно снижает микробиологические риски.</p><p>Также важно не размораживать рыбу при комнатной температуре: лучше делать это в холодильнике.</p>",
+                    ImageFileName = "news1.png",
+                    CreatedAt = new DateTime(2026, 3, 15, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new News
+                {
+                    Id = 10,
+                    Title = "Сезонные овощи весной: что выбирать",
+                    Summary = "Диетологи составили список доступных овощей для сбалансированного меню весной.",
+                    ContentHtml = "<p>Весной специалисты советуют делать акцент на капусте, моркови, свекле, зелени и замороженных овощных смесях высокого качества. Такой набор помогает закрыть потребность в клетчатке и микронутриентах.</p><p>Для практичного меню подойдут овощные супы, запеканки и теплые салаты с бобовыми.</p>",
+                    ImageFileName = "news2.png",
+                    CreatedAt = new DateTime(2026, 3, 16, 0, 0, 0, DateTimeKind.Utc)
                 }
             };
 
