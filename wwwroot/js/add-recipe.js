@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     div.classList.add("ingredient");
     div.innerHTML = `
       <div class="input-row">
-        <input type="text" name="ingredients[]" placeholder="Например: 200 г муки" required>
+        <input type="text" name="ingredientNames[]" placeholder="Название ингредиента" maxlength="80" required>
+        <input type="text" name="ingredientAmounts[]" placeholder="Количество" maxlength="40" required>
         <button type="button" onclick="this.closest('.ingredient').remove()">Удалить</button>
       </div>
     `;
@@ -94,8 +95,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const difficultyInput = recipeForm.querySelector('select[name="difficulty"]');
     const mainImageInput = recipeForm.querySelector('#recipeImage');
 
-    const ingredients = Array.from(recipeForm.querySelectorAll('input[name="ingredients[]"]'))
-      .map(i => i.value.trim())
+    const ingredientNameInputs = Array.from(recipeForm.querySelectorAll('input[name="ingredientNames[]"]'));
+    const ingredientAmountInputs = Array.from(recipeForm.querySelectorAll('input[name="ingredientAmounts[]"]'));
+
+    const ingredients = ingredientNameInputs
+      .map((nameInput, idx) => {
+        const name = nameInput.value.trim();
+        const amount = ingredientAmountInputs[idx]?.value.trim() || '';
+        if (!name || !amount) return '';
+        return `${name} — ${amount}`;
+      })
       .filter(Boolean);
 
     const steps = Array.from(recipeForm.querySelectorAll('textarea[name="steps[]"]'))
