@@ -145,11 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       alert('Рецепт успешно сохранен');
       if (result.data?.slug) {
-        window.location.href = `/home/recipe/${encodeURIComponent(result.data.slug)}`;
+        window.location.href = `/recipe/${encodeURIComponent(result.data.slug)}`;
         return;
       }
 
-      window.location.href = '/home/catalog';
+      window.location.href = '/catalog';
     } catch (error) {
       alert(error.message || 'Ошибка при сохранении рецепта');
     } finally {
