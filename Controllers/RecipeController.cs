@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using WebApplication.Data;
 using WebApplication.Models;
 using WebApplication.Models.Requests;
@@ -10,6 +11,16 @@ namespace WebApplication.Controllers
     [Route("api/[controller]")]
     public class RecipeController : ControllerBase
     {
+        private static readonly HashSet<string> AllowedImageTypes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "image/jpeg",
+            "image/png",
+            "image/webp"
+        };
+
+        private const long MaxImageSizeBytes = 2 * 1024 * 1024;
+        private static readonly Regex CuisineRegex = new(@"^[\p{L}\s\-]+$", RegexOptions.Compiled);
+
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _environment;
 
@@ -22,44 +33,32 @@ namespace WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Title) || request.Title.Trim().Length < 3)
+            var validationErrors = ValidateCreateRecipeRequest(request, out var ingredients, out var steps);
+            if (validationErrors.Count > 0)
             {
-                return BadRequest(new { success = false, message = "Название должно содержать минимум 3 символа" });
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Description) || request.Description.Trim().Length < 10)
-            {
-                return BadRequest(new { success = false, message = "Описание должно содержать минимум 10 символов" });
-            }
-
-            if (request.Difficulty < 1 || request.Difficulty > 3)
-            {
-                return BadRequest(new { success = false, message = "Неверная сложность" });
-            }
-
-            var ingredients = request.Ingredients
-                .Where(i => !string.IsNullOrWhiteSpace(i))
-                .Select(i => i.Trim())
-                .ToList();
-
-            var steps = request.Steps
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .Select(s => s.Trim())
-                .ToList();
-
-            if (ingredients.Count == 0)
-            {
-                return BadRequest(new { success = false, message = "Добавьте хотя бы один ингредиент" });
-            }
-
-            if (steps.Count == 0)
-            {
-                return BadRequest(new { success = false, message = "Добавьте хотя бы один шаг" });
+                return BadRequest(new
+                {
+                    success = false,
+                    message = validationErrors[0],
+                    errors = validationErrors
+                });
             }
 
             await SyncPrimaryKeySequencesAsync();
 
-            var categoryId = ResolveCategoryId(request.Cuisine);
+            int categoryId;
+            Category? cuisineCategory = null;
+            if (request.CuisineId.HasValue)
+            {
+                cuisineCategory = await _context.Categories.FindAsync(request.CuisineId.Value);
+                categoryId = cuisineCategory != null ? cuisineCategory.Id : ResolveCategoryId(request.Cuisine);
+            }
+            else
+            {
+                categoryId = ResolveCategoryId(request.Cuisine);
+                cuisineCategory = await _context.Categories.FindAsync(categoryId);
+            }
+
             var slug = await GenerateUniqueSlugAsync(request.Title);
             var imageFolder = Path.Combine(_environment.WebRootPath, "images", "user");
             Directory.CreateDirectory(imageFolder);
@@ -74,7 +73,7 @@ namespace WebApplication.Controllers
                 Author = string.IsNullOrWhiteSpace(request.Author) ? null : request.Author.Trim(),
                 Slug = slug,
                 Description = request.Description.Trim(),
-                Cuisine = string.IsNullOrWhiteSpace(request.Cuisine) ? null : request.Cuisine.Trim(),
+                Cuisine = cuisineCategory?.DisplayName ?? (string.IsNullOrWhiteSpace(request.Cuisine) ? null : request.Cuisine.Trim()),
                 Difficulty = request.Difficulty,
                 ImageFileName = mainImageFileName,
                 IsFavorite = false,
@@ -290,6 +289,61 @@ namespace WebApplication.Controllers
         }
 
         /// <summary>
+        /// Get all cuisines (categories)
+        /// </summary>
+        [HttpGet("cuisines")]
+        public async Task<IActionResult> GetCuisines()
+        {
+            try
+            {
+                var cuisines = await _context.Categories
+                    .Select(c => new { c.Id, c.Name, c.DisplayName })
+                    .OrderBy(c => c.DisplayName)
+                    .ToListAsync();
+                return Ok(new { success = true, cuisines });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Create a new cuisine (category)
+        /// </summary>
+        [HttpPost("cuisines")]
+        public async Task<IActionResult> CreateCuisine([FromBody] CreateCuisineRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request?.DisplayName))
+                return BadRequest(new { success = false, message = "Укажите название кухни" });
+
+            var displayName = request.DisplayName.Trim();
+            if (displayName.Length < 2 || displayName.Length > 60)
+                return BadRequest(new { success = false, message = "Название кухни должно быть от 2 до 60 символов" });
+
+            if (!CuisineRegex.IsMatch(displayName))
+                return BadRequest(new { success = false, message = "Название кухни может содержать только буквы, пробелы и дефисы" });
+
+            var existing = await _context.Categories
+                .FirstOrDefaultAsync(c => c.DisplayName.ToLower() == displayName.ToLower());
+            if (existing != null)
+                return Ok(new { success = true, id = existing.Id, name = existing.Name, displayName = existing.DisplayName, isNew = false });
+
+            await _context.Database.ExecuteSqlRawAsync(@"
+SELECT setval(pg_get_serial_sequence('""Categories""', 'Id'), COALESCE(MAX(""Id""), 1)) FROM ""Categories"";
+");
+
+            var name = ToSlug(displayName);
+            if (string.IsNullOrWhiteSpace(name)) name = "cuisine";
+
+            var category = new Category { Name = name, DisplayName = displayName };
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, id = category.Id, name = category.Name, displayName = category.DisplayName, isNew = true });
+        }
+
+        /// <summary>
         /// Get all available categories and difficulties for filter UI
         /// </summary>
         [HttpGet("filters")]
@@ -398,6 +452,152 @@ namespace WebApplication.Controllers
             await file.CopyToAsync(stream);
 
             return $"user/{fileName}";
+        }
+
+        private List<string> ValidateCreateRecipeRequest(CreateRecipeRequest request, out List<string> normalizedIngredients, out List<string> normalizedSteps)
+        {
+            var errors = new List<string>();
+
+            var title = request.Title?.Trim() ?? string.Empty;
+            var description = request.Description?.Trim() ?? string.Empty;
+            var author = request.Author?.Trim() ?? string.Empty;
+            var cuisine = request.Cuisine?.Trim() ?? string.Empty;
+
+            if (title.Length < 3 || title.Length > 120)
+            {
+                errors.Add("Название должно быть от 3 до 120 символов");
+            }
+
+            if (description.Length < 10 || description.Length > 250)
+            {
+                errors.Add("Описание должно быть от 10 до 250 символов");
+            }
+
+            if (!string.IsNullOrEmpty(author) && (author.Length < 2 || author.Length > 60))
+            {
+                errors.Add("Имя автора должно быть от 2 до 60 символов или пустым");
+            }
+
+            if (!string.IsNullOrEmpty(cuisine))
+            {
+                if (cuisine.Length < 3 || cuisine.Length > 60)
+                {
+                    errors.Add("Поле \"Кухня\" должно быть от 3 до 60 символов");
+                }
+                else if (!CuisineRegex.IsMatch(cuisine))
+                {
+                    errors.Add("Поле \"Кухня\" может содержать только буквы, пробелы и дефисы");
+                }
+            }
+
+            if (request.Difficulty < 1 || request.Difficulty > 3)
+            {
+                errors.Add("Неверная сложность");
+            }
+
+            if (request.CookingTime <= 0 || request.CookingTime > 1440)
+            {
+                errors.Add("Время приготовления должно быть от 1 до 1440 минут");
+            }
+
+            normalizedIngredients = request.Ingredients
+                .Where(i => !string.IsNullOrWhiteSpace(i))
+                .Select(i => i.Trim())
+                .ToList();
+
+            if (normalizedIngredients.Count == 0)
+            {
+                errors.Add("Добавьте хотя бы один ингредиент");
+            }
+
+            for (var i = 0; i < normalizedIngredients.Count; i++)
+            {
+                var ingredient = normalizedIngredients[i];
+                if (ingredient.Length > 140)
+                {
+                    errors.Add($"Ингредиент №{i + 1} слишком длинный");
+                    continue;
+                }
+
+                var separatorIndex = ingredient.IndexOf('—');
+                if (separatorIndex <= 0 || separatorIndex >= ingredient.Length - 1)
+                {
+                    errors.Add($"Ингредиент №{i + 1} должен содержать название и количество");
+                    continue;
+                }
+
+                var ingredientName = ingredient[..separatorIndex].Trim();
+                var ingredientAmount = ingredient[(separatorIndex + 1)..].Trim();
+                if (ingredientName.Length == 0 || ingredientAmount.Length == 0)
+                {
+                    errors.Add($"Ингредиент №{i + 1} должен содержать название и количество");
+                }
+            }
+
+            normalizedSteps = request.Steps
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim())
+                .ToList();
+
+            if (normalizedSteps.Count == 0)
+            {
+                errors.Add("Добавьте хотя бы один шаг");
+            }
+
+            for (var i = 0; i < normalizedSteps.Count; i++)
+            {
+                var step = normalizedSteps[i];
+                if (step.Length < 10 || step.Length > 1000)
+                {
+                    errors.Add($"Шаг №{i + 1} должен быть от 10 до 1000 символов");
+                }
+            }
+
+            if (request.StepImages.Count > normalizedSteps.Count)
+            {
+                errors.Add("Количество изображений шагов не должно превышать количество шагов");
+            }
+
+            if (request.MainImage != null && request.MainImage.Length > 0)
+            {
+                var mainImageError = ValidateImageFile(request.MainImage);
+                if (mainImageError != null)
+                {
+                    errors.Add($"Основное изображение: {mainImageError}");
+                }
+            }
+
+            for (var i = 0; i < request.StepImages.Count; i++)
+            {
+                var stepImage = request.StepImages[i];
+                if (stepImage == null || stepImage.Length == 0)
+                {
+                    continue;
+                }
+
+                var stepImageError = ValidateImageFile(stepImage);
+                if (stepImageError != null)
+                {
+                    errors.Add($"Изображение шага №{i + 1}: {stepImageError}");
+                }
+            }
+
+            return errors;
+        }
+
+        private static string? ValidateImageFile(IFormFile file)
+        {
+            if (!AllowedImageTypes.Contains(file.ContentType))
+            {
+                return "допустимы только JPG, PNG или WebP";
+            }
+
+            if (file.Length > MaxImageSizeBytes)
+            {
+                return "размер не должен превышать 2 МБ";
+            }
+
+            return null;
         }
 
         private async Task SyncPrimaryKeySequencesAsync()

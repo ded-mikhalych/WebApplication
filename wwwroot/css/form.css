@@ -71,7 +71,6 @@ textarea#description {
 
 /* === ИНГРЕДИЕНТЫ — input и кнопка на одной строке === */
 #ingredients {
-  display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px 20px;
   margin: 16px 0 26px;

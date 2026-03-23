@@ -1,16 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('recipeForm');
   if (!form) return;
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 
   // === Серые подсказки (видны сразу, исчезают при валидности) ===
   const hints = {
-    title: "Обязательно, минимум 3 символа",
-    description: "Обязательно, минимум 10 символов, мксимум 250 символов",
-    author: "Минимум 2 символа",
-    cuisine: "Только буквы, пробелы и дефисы",
+    title: "Обязательно, от 3 до 120 символов",
+    description: "Обязательно, от 10 до 250 символов",
+    author: "От 2 до 60 символов или пусто",
+    cuisine: "От 3 до 60 символов, только буквы/пробелы/дефисы",
     difficulty: "Обязательно выбрать сложность",
-    "ingredients[]": "Добавьте хотя бы один ингредиент",
-    "steps[]": "Добавьте хотя бы один шаг (минимум 10 символов)",
+    "ingredientNames[]": "Укажите название ингредиента",
+    "ingredientAmounts[]": "Укажите количество ингредиента",
+    "steps[]": "Добавьте хотя бы один шаг (от 10 до 1000 символов)",
     image: "JPG/PNG/WebP до 2 МБ"
   };
 
@@ -32,21 +35,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = "";
   }
 
+  function isImageValid(file) {
+    return ALLOWED_IMAGE_TYPES.includes(file.type) && file.size <= MAX_IMAGE_SIZE;
+  }
+
   function isFieldValid(input) {
-    if (input.name === "title") return input.value.trim().length >= 3;
-    if (input.name === "description") return input.value.trim().length >= 10;
-    if (input.name === "author") return !input.value.trim() || input.value.trim().length >= 2;
+    if (input.name === "title") {
+      const v = input.value.trim();
+      return v.length >= 3 && v.length <= 120;
+    }
+    if (input.name === "description") {
+      const v = input.value.trim();
+      return v.length >= 10 && v.length <= 250;
+    }
+    if (input.name === "author") {
+      const v = input.value.trim();
+      return !v || (v.length >= 2 && v.length <= 60);
+    }
     if (input.name === "cuisine") {
       const v = input.value.trim();
-      return !v || (v.length >= 3 && /^[\p{L}\s\-]+$/u.test(v));
+      return !v || (v.length >= 3 && v.length <= 60 && /^[\p{L}\s\-]+$/u.test(v));
     }
     if (input.name === "difficulty") return ["easy", "medium", "hard"].includes(input.value);
-    if (input.name === "ingredients[]") return input.value.trim().length > 0;
-    if (input.name === "steps[]") return input.value.trim().length >= 10;
+    if (input.name === "ingredientNames[]") {
+      const v = input.value.trim();
+      return v.length > 0 && v.length <= 80;
+    }
+    if (input.name === "ingredientAmounts[]") {
+      const v = input.value.trim();
+      return v.length > 0 && v.length <= 40;
+    }
+    if (input.name === "steps[]") {
+      const v = input.value.trim();
+      return v.length >= 10 && v.length <= 1000;
+    }
     if (input.id === "recipeImage") {
       if (!input.files?.[0]) return true;
-      const f = input.files[0];
-      return ["image/jpeg", "image/png", "image/webp"].includes(f.type) && f.size <= 2 * 1024 * 1024;
+      return isImageValid(input.files[0]);
     }
     return true;
   }
@@ -111,29 +136,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = form.querySelector('[name="description"]');
     const author = form.querySelector('[name="author"]');
     const cuisine = form.querySelector('[name="cuisine"]');
-    const ingredientInputs = Array.from(form.querySelectorAll('input[name="ingredients[]"]'));
+    const ingredientNameInputs = Array.from(form.querySelectorAll('input[name="ingredientNames[]"]'));
+    const ingredientAmountInputs = Array.from(form.querySelectorAll('input[name="ingredientAmounts[]"]'));
     const stepTextareas = Array.from(form.querySelectorAll('textarea[name="steps[]"]'));
+    const stepImageInputs = Array.from(form.querySelectorAll('.step input[type="file"]'));
     const difficulty = form.querySelector('[name="difficulty"]');
     const imageInput = form.querySelector('#recipeImage');
 
-    if (!title || title.value.trim().length < 3) {
-      errors.push('Название должно содержать не менее 3 символов');
+    if (!title || title.value.trim().length < 3 || title.value.trim().length > 120) {
+      errors.push('Название должно быть от 3 до 120 символов');
       if (!firstInvalid) firstInvalid = title;
     }
 
-    if (!desc || desc.value.trim().length < 10) {
-      errors.push('Описание должно содержать не менее 10 символов');
+    if (!desc || desc.value.trim().length < 10 || desc.value.trim().length > 250) {
+      errors.push('Описание должно быть от 10 до 250 символов');
       if (!firstInvalid) firstInvalid = desc;
     }
 
-    if (author && author.value.trim().length > 0 && author.value.trim().length < 2) {
-      errors.push('Имя автора должно содержать как минимум 2 символа или оставьте поле пустым');
+    if (author && author.value.trim().length > 0 && (author.value.trim().length < 2 || author.value.trim().length > 60)) {
+      errors.push('Имя автора должно быть от 2 до 60 символов или оставьте поле пустым');
       if (!firstInvalid) firstInvalid = author;
     }
 
     if (cuisine && cuisine.value.trim().length > 0) {
-      if (cuisine.value.trim().length < 3) {
-        errors.push('Поле "Кухня" должно содержать не менее 3 символов');
+      if (cuisine.value.trim().length < 3 || cuisine.value.trim().length > 60) {
+        errors.push('Поле "Кухня" должно быть от 3 до 60 символов');
         if (!firstInvalid) firstInvalid = cuisine;
       } else if (!/^[\p{L}\s\-]+$/u.test(cuisine.value.trim())) {
         errors.push('Поле "Кухня" должно содержать только буквы, пробелы и дефисы');
@@ -141,16 +168,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    const ingredientsFilled = ingredientInputs.map(i => i.value.trim()).filter(v => v.length > 0);
-    if (ingredientsFilled.length === 0) {
-      errors.push('Добавьте хотя бы один ингредиент');
-      if (!firstInvalid && ingredientInputs.length) firstInvalid = ingredientInputs[0];
+    const ingredientPairs = ingredientNameInputs.map((nameInput, idx) => ({
+      nameInput,
+      amountInput: ingredientAmountInputs[idx],
+      name: nameInput.value.trim(),
+      amount: ingredientAmountInputs[idx]?.value.trim() || ''
+    }));
+
+    const completeIngredients = ingredientPairs.filter(p => p.name.length > 0 && p.amount.length > 0);
+    if (completeIngredients.length === 0) {
+      errors.push('Добавьте хотя бы один ингредиент с названием и количеством');
+      if (!firstInvalid && ingredientNameInputs.length) firstInvalid = ingredientNameInputs[0];
+    }
+
+    const tooLongIngredient = ingredientPairs.find(p => p.name.length > 80 || p.amount.length > 40);
+    if (tooLongIngredient) {
+      errors.push('Название ингредиента до 80 символов, количество до 40 символов');
+      if (!firstInvalid) firstInvalid = tooLongIngredient.nameInput;
+    }
+
+    const halfFilledIngredient = ingredientPairs.find(p => (p.name.length > 0) !== (p.amount.length > 0));
+    if (halfFilledIngredient) {
+      errors.push('Для каждого ингредиента заполните и название, и количество');
+      if (!firstInvalid) firstInvalid = halfFilledIngredient.nameInput;
     }
 
     const stepsFilled = stepTextareas.map(t => t.value.trim()).filter(v => v.length > 0);
     if (stepsFilled.length === 0) {
       errors.push('Добавьте хотя бы один шаг приготовления');
       if (!firstInvalid && stepTextareas.length) firstInvalid = stepTextareas[0];
+    }
+
+    const invalidStep = stepTextareas.find(t => {
+      const v = t.value.trim();
+      return v.length > 0 && (v.length < 10 || v.length > 1000);
+    });
+    if (invalidStep) {
+      errors.push('Каждый шаг должен быть от 10 до 1000 символов');
+      if (!firstInvalid) firstInvalid = invalidStep;
     }
 
     if (!difficulty || !['easy', 'medium', 'hard'].includes(difficulty.value)) {
@@ -160,15 +215,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (imageInput && imageInput.files && imageInput.files.length > 0) {
       const file = imageInput.files[0];
-      const allowed = ['image/jpeg', 'image/png', 'image/webp'];
-      const maxSize = 2 * 1024 * 1024;
-      if (!allowed.includes(file.type)) {
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
         errors.push('Изображение должно быть в формате JPG/PNG/WebP');
         if (!firstInvalid) firstInvalid = imageInput;
-      } else if (file.size > maxSize) {
+      } else if (file.size > MAX_IMAGE_SIZE) {
         errors.push('Изображение не должно быть больше 2 МБ');
         if (!firstInvalid) firstInvalid = imageInput;
       }
+    }
+
+    const badStepImage = stepImageInputs.find(input => input.files?.[0] && !isImageValid(input.files[0]));
+    if (badStepImage) {
+      errors.push('Изображения шагов должны быть JPG/PNG/WebP и не более 2 МБ');
+      if (!firstInvalid) firstInvalid = badStepImage;
     }
 
     if (errors.length) {

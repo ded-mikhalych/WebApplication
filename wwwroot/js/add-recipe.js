@@ -5,13 +5,97 @@ document.addEventListener("DOMContentLoaded", () => {
   const addStepBtn = document.getElementById("addStep");
   let stepCount = 0;
 
+  // === Кухня: загружаем список и обрабатываем добавление новой ===
+  const cuisineSelect = document.getElementById("cuisineSelect");
+  const newCuisineForm = document.getElementById("newCuisineForm");
+  const newCuisineNameInput = document.getElementById("newCuisineName");
+  const addCuisineBtn = document.getElementById("addCuisineBtn");
+  const cancelNewCuisineBtn = document.getElementById("cancelNewCuisine");
+  const newCuisineError = document.getElementById("newCuisineError");
+
+  async function loadCuisines(selectValue) {
+    try {
+      const response = await fetch("/api/recipe/cuisines");
+      const result = await response.json();
+      if (!result.success) return;
+
+      // Сохраняем текущий выбор, затем перестраиваем опции
+      cuisineSelect.innerHTML = '<option value="">Не выбрана</option>';
+      result.cuisines.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id;
+        opt.textContent = c.displayName;
+        cuisineSelect.appendChild(opt);
+      });
+      const addNewOpt = document.createElement("option");
+      addNewOpt.value = "__new__";
+      addNewOpt.textContent = "— Добавить новую —";
+      cuisineSelect.appendChild(addNewOpt);
+
+      if (selectValue != null) {
+        cuisineSelect.value = String(selectValue);
+      }
+    } catch (e) {
+      console.error("Не удалось загрузить список кухонь:", e);
+    }
+  }
+
+  loadCuisines(null);
+
+  cuisineSelect.addEventListener("change", () => {
+    if (cuisineSelect.value === "__new__") {
+      newCuisineForm.style.display = "block";
+      newCuisineNameInput.focus();
+    } else {
+      newCuisineForm.style.display = "none";
+    }
+  });
+
+  cancelNewCuisineBtn.addEventListener("click", () => {
+    newCuisineForm.style.display = "none";
+    newCuisineNameInput.value = "";
+    newCuisineError.textContent = "";
+    cuisineSelect.value = "";
+  });
+
+  addCuisineBtn.addEventListener("click", async () => {
+    const name = newCuisineNameInput.value.trim();
+    newCuisineError.textContent = "";
+    if (!name) {
+      newCuisineError.textContent = "Введите название кухни";
+      return;
+    }
+
+    addCuisineBtn.disabled = true;
+    try {
+      const response = await fetch("/api/recipe/cuisines", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ displayName: name })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        newCuisineError.textContent = result.message || "Не удалось добавить кухню";
+        return;
+      }
+      await loadCuisines(result.id);
+      newCuisineForm.style.display = "none";
+      newCuisineNameInput.value = "";
+    } catch (e) {
+      newCuisineError.textContent = "Ошибка при добавлении кухни";
+    } finally {
+      addCuisineBtn.disabled = false;
+    }
+  });
+
   // Добавление ингредиента
   addIngredientBtn.addEventListener("click", () => {
     const div = document.createElement("div");
     div.classList.add("ingredient");
     div.innerHTML = `
       <div class="input-row">
-        <input type="text" name="ingredients[]" placeholder="Например: 200 г муки" required>
+        <input type="text" name="ingredientNames[]" placeholder="Название ингредиента" maxlength="80" required>
+        <input type="text" name="ingredientAmounts[]" placeholder="Количество" maxlength="40" required>
         <button type="button" onclick="this.closest('.ingredient').remove()">Удалить</button>
       </div>
     `;
@@ -90,12 +174,20 @@ document.addEventListener("DOMContentLoaded", () => {
     const titleInput = recipeForm.querySelector('input[name="title"]');
     const descriptionInput = recipeForm.querySelector('textarea[name="description"]');
     const authorInput = recipeForm.querySelector('input[name="author"]');
-    const cuisineInput = recipeForm.querySelector('input[name="cuisine"]');
     const difficultyInput = recipeForm.querySelector('select[name="difficulty"]');
     const mainImageInput = recipeForm.querySelector('#recipeImage');
+    const cuisineSelectEl = recipeForm.querySelector('#cuisineSelect');
 
-    const ingredients = Array.from(recipeForm.querySelectorAll('input[name="ingredients[]"]'))
-      .map(i => i.value.trim())
+    const ingredientNameInputs = Array.from(recipeForm.querySelectorAll('input[name="ingredientNames[]"]'));
+    const ingredientAmountInputs = Array.from(recipeForm.querySelectorAll('input[name="ingredientAmounts[]"]'));
+
+    const ingredients = ingredientNameInputs
+      .map((nameInput, idx) => {
+        const name = nameInput.value.trim();
+        const amount = ingredientAmountInputs[idx]?.value.trim() || '';
+        if (!name || !amount) return '';
+        return `${name} — ${amount}`;
+      })
       .filter(Boolean);
 
     const steps = Array.from(recipeForm.querySelectorAll('textarea[name="steps[]"]'))
@@ -108,7 +200,10 @@ document.addEventListener("DOMContentLoaded", () => {
     formData.append('Title', titleInput?.value?.trim() || '');
     formData.append('Description', descriptionInput?.value?.trim() || '');
     formData.append('Author', authorInput?.value?.trim() || '');
-    formData.append('Cuisine', cuisineInput?.value?.trim() || '');
+    const selectedCuisineId = cuisineSelectEl?.value;
+    if (selectedCuisineId && selectedCuisineId !== '__new__' && selectedCuisineId !== '') {
+      formData.append('CuisineId', selectedCuisineId);
+    }
     formData.append('Difficulty', String(difficultyMap[difficultyInput?.value] || 0));
     formData.append('CookingTime', '30');
 

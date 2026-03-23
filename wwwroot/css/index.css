@@ -7,10 +7,18 @@ h2 + div > div h3, h2 + div > div > a h3{font-size:14px;margin:4px 0}
 h2 + div > div p{font-size:13px;color:var(--muted);margin:0}
 
 /* ---- Карточки ---- */
-.news-card{width:240px;align-items:stretch; height: 235px;}
-.news-card img{height:120px}
-.news-card h3{font-size:15px;margin:6px 0}
-.news-card p{font-size:13px}
+.news-card{width:240px;align-items:stretch;min-height:235px;overflow:hidden}
+.news-card img{height:120px;flex-shrink:0}
+.news-card h3{font-size:15px;margin:6px 0;flex-shrink:0}
+.news-card p{
+	font-size:13px;
+	margin:0;
+	color:var(--muted);
+	display:-webkit-box;
+	-webkit-line-clamp:3;
+	-webkit-box-orient:vertical;
+	overflow:hidden;
+}
 .recipe-card{display:flex;flex-direction:column;align-items:center;padding:6px}
 .recipe-card img{width:140px;height:110px;object-fit:cover}
 .recipe-card h4{margin:8px 0 0;font-size:15px}
